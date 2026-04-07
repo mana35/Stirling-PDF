@@ -1,0 +1,288 @@
+/* MESEST PDF Tools - iLovePDF-inspired Theme
+ * Clean, modern design with colorful tool cards
+ * Brand colors: Navy blue (#1e3a5f) + Accent red (#e53935)
+ */
+
+:root {
+  /* MESEST Brand Colors */
+  --mesest-primary: #1e3a5f;
+  --mesest-primary-light: #2d5a8a;
+  --mesest-primary-dark: #0f1f33;
+  --mesest-accent: #e53935;
+  --mesest-accent-light: #ff6f60;
+  --mesest-accent-dark: #ab000d;
+  
+  /* iLovePDF-style Tool Card Colors */
+  --tool-color-merge: #e53935;      /* Red - Merge */
+  --tool-color-split: #fb8c00;      /* Orange - Split */
+  --tool-color-compress: #43a047;   /* Green - Compress */
+  --tool-color-convert: #1e88e5;    /* Blue - Convert */
+  --tool-color-edit: #8e24aa;       /* Purple - Edit */
+  --tool-color-security: #f4511e;   /* Deep Orange - Security */
+  --tool-color-organize: #00acc1;   /* Cyan - Organize */
+  --tool-color-ocr: #3949ab;        /* Indigo - OCR */
+  --tool-color-sign: #00897b;       /* Teal - Sign */
+  --tool-color-watermark: #7cb342;  /* Light Green - Watermark */
+  
+  /* Override primary colors for MESEST branding */
+  --color-primary-500: #1e3a5f;
+  --color-primary-600: #162d4a;
+  --color-primary-700: #0f1f33;
+  
+  /* Clean white background like iLovePDF */
+  --bg-surface: #ffffff;
+  --bg-background: #f8f9fa;
+  --bg-toolbar: #ffffff;
+  
+  /* Category colors override - more vibrant like iLovePDF */
+  --category-color-removal: #e53935;
+  --category-color-security: #f4511e;
+  --category-color-formatting: #8e24aa;
+  --category-color-extraction: #00acc1;
+  --category-color-signing: #00897b;
+  --category-color-general: #1e88e5;
+  --category-color-verification: #fb8c00;
+  --category-color-automation: #ec407a;
+  --category-color-developer: #78909c;
+  
+  /* iLovePDF-style shadows - subtle but visible */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-card-active: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Tool card specific */
+  --tool-card-radius: 16px;
+  --tool-card-padding: 24px;
+  --tool-icon-size: 48px;
+}
+
+/* Embedded mode - hide header when ?embedded=true */
+body.embedded-mode .tool-panel__fullscreen-header,
+body.embedded-mode .mobile-header,
+body.embedded-mode .mobile-brand,
+body.embedded-mode [data-tour="quick-access-bar"] {
+  display: none !important;
+}
+
+body.embedded-mode .tool-panel__fullscreen-surface-inner {
+  border-radius: 0;
+}
+
+body.embedded-mode .mobile-layout {
+  padding-top: 0;
+}
+
+/* iLovePDF-style Tool Cards in Fullscreen Mode */
+.tool-panel__fullscreen-item {
+  background: var(--bg-surface);
+  border: none;
+  border-radius: var(--tool-card-radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem 1.5rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tool-panel__fullscreen-item:hover:not([aria-disabled="true"]):not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.tool-panel__fullscreen-item:active:not([aria-disabled="true"]):not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-active);
+}
+
+/* Colorful icon backgrounds like iLovePDF */
+.tool-panel__fullscreen-icon {
+  width: var(--tool-icon-size);
+  height: var(--tool-icon-size);
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--tool-card-color, var(--category-color-general)), color-mix(in srgb, var(--tool-card-color, var(--category-color-general)) 80%, black));
+  color: white;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--tool-card-color, var(--category-color-general)) 40%, transparent);
+}
+
+.tool-panel__fullscreen-icon::before {
+  display: none;
+}
+
+.tool-panel__fullscreen-icon svg {
+  font-size: 1.75rem;
+  color: white;
+}
+
+/* Tool name styling */
+.tool-panel__fullscreen-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+/* Tool description styling */
+.tool-panel__fullscreen-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Compact list items - iLovePDF style */
+.tool-panel__fullscreen-list-item {
+  background: var(--bg-surface);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-card);
+  border: none;
+}
+
+.tool-panel__fullscreen-list-item:hover:not([aria-disabled="true"]):not(:disabled) {
+  background: var(--bg-surface);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.tool-panel__fullscreen-list-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--tool-card-color, var(--category-color-general)), color-mix(in srgb, var(--tool-card-color, var(--category-color-general)) 80%, black));
+  color: white;
+}
+
+.tool-panel__fullscreen-list-icon::before {
+  display: none;
+}
+
+/* Section headers - cleaner look */
+.tool-panel__fullscreen-section-header {
+  padding: 0.5rem 0.25rem 0.75rem;
+}
+
+.tool-panel__fullscreen-group {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 1rem;
+}
+
+/* Grid layout for detailed view - larger cards */
+.tool-panel__fullscreen-grid--detailed {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Upload area styling - iLovePDF-like drag & drop */
+.dropzone-inner,
+.landing-inner-paper {
+  border: 2px dashed var(--mesest-primary);
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  transition: all 0.3s ease;
+}
+
+.dropzone-inner:hover,
+.landing-inner-paper:hover {
+  border-color: var(--mesest-accent);
+  background: linear-gradient(135deg, #fff5f5 0%, #ffebee 100%);
+}
+
+/* Primary action button - iLovePDF red style */
+.mantine-Button-root[data-variant="filled"] {
+  background: linear-gradient(135deg, var(--mesest-accent) 0%, var(--mesest-accent-dark) 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: none;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+  transition: all 0.25s ease;
+}
+
+.mantine-Button-root[data-variant="filled"]:hover {
+  background: linear-gradient(135deg, var(--mesest-accent-light) 0%, var(--mesest-accent) 100%);
+  box-shadow: 0 6px 20px rgba(229, 57, 53, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Mobile bottom bar styling */
+.mobile-bottom-bar {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-bottom-button {
+  color: var(--mesest-primary);
+}
+
+.mobile-bottom-button:active {
+  background: rgba(30, 58, 95, 0.1);
+}
+
+/* Quick access bar styling */
+[data-tour="quick-access-bar"] {
+  background: var(--mesest-primary);
+}
+
+[data-tour="quick-access-bar"] button {
+  color: white;
+}
+
+[data-tour="quick-access-bar"] button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* MESEST branding in header */
+.tool-panel__fullscreen-brand-text,
+.mobile-brand-text {
+  filter: none;
+}
+
+/* Dark mode adjustments */
+[data-mantine-color-scheme="dark"] {
+  --mesest-primary: #3d6a9f;
+  --mesest-primary-light: #5a8ac4;
+  --mesest-accent: #ff6659;
+  
+  --bg-surface: #1a1a2e;
+  --bg-background: #16162a;
+  --bg-toolbar: #1a1a2e;
+}
+
+[data-mantine-color-scheme="dark"] .tool-panel__fullscreen-item {
+  background: var(--bg-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-mantine-color-scheme="dark"] .tool-panel__fullscreen-item:hover:not([aria-disabled="true"]):not(:disabled) {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+[data-mantine-color-scheme="dark"] .tool-panel__fullscreen-list-item {
+  background: var(--bg-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tool-panel__fullscreen-grid--detailed {
+    grid-template-columns: 1fr;
+  }
+  
+  .tool-panel__fullscreen-item {
+    padding: 1rem 1.25rem;
+  }
+  
+  .tool-panel__fullscreen-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .tool-panel__fullscreen-icon svg {
+    font-size: 1.5rem;
+  }
+}
+
+/* RTL support */
+[dir="rtl"] .tool-panel__fullscreen-list-item:hover:not([aria-disabled="true"]):not(:disabled) {
+  transform: translateX(-4px);
+}

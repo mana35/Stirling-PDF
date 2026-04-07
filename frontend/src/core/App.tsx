@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AppProviders } from "@app/components/AppProviders";
 import { AppLayout } from "@app/components/AppLayout";
@@ -13,6 +13,22 @@ import Onboarding from "@app/components/onboarding/Onboarding";
 import "@app/styles/tailwind.css";
 import "@app/styles/cookieconsent.css";
 import "@app/styles/index.css";
+
+// Embedded mode detection - adds class to body when ?embedded=true
+function useEmbeddedMode() {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isEmbedded = params.get('embedded') === 'true';
+    if (isEmbedded) {
+      document.body.classList.add('embedded-mode');
+    } else {
+      document.body.classList.remove('embedded-mode');
+    }
+    return () => {
+      document.body.classList.remove('embedded-mode');
+    };
+  }, []);
+}
 
 // Import file ID debugging helpers (development only)
 import "@app/utils/fileIdSafety";
@@ -29,6 +45,9 @@ function MobileScannerProviders({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // Detect and apply embedded mode styling
+  useEmbeddedMode();
+  
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Routes>

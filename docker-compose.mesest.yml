@@ -1,0 +1,82 @@
+version: '3.8'
+
+# MESEST PDF Tools - Docker Compose for Dokploy Deployment
+# Deploy at: mescopdf.mesest.cloud
+# Keycloak SSO: sso.mesest.cloud
+
+services:
+  stirling-pdf:
+    image: ghcr.io/mana35/stirling-pdf:mesest
+    container_name: mesest-pdf-tools
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # App Configuration
+      - DOCKER_ENABLE_SECURITY=true
+      - SYSTEM_DEFAULTLOCALE=ar_SA
+      - UI_APPNAME=MESEST PDF Tools
+      - UI_HOMEDESCRIPTION=أدوات PDF المجانية - Free PDF Tools
+      - UI_APPNAVBARNAME=MESEST PDF
+      - SYSTEM_MAXFILESIZE=100
+      
+      # OAuth2/OIDC Configuration for Keycloak
+      - SECURITY_OAUTH2_ENABLED=true
+      - SECURITY_OAUTH2_ISSUER=https://sso.mesest.cloud/realms/mesest
+      - SECURITY_OAUTH2_CLIENT_ID=stirling-pdf
+      - SECURITY_OAUTH2_CLIENT_SECRET=${STIRLING_OIDC_SECRET}
+      - SECURITY_OAUTH2_AUTOCREATEUSER=true
+      - SECURITY_OAUTH2_USEASUSERNAME=preferred_username
+      - SECURITY_OAUTH2_SCOPES=openid,profile,email
+      - SECURITY_OAUTH2_PROVIDER=keycloak
+      
+      # Security headers for iframe embedding
+      - SECURITY_CSPDISABLED=true
+      
+      # Disable internal login (use Keycloak only)
+      - SECURITY_ENABLELOGIN=false
+      
+      # Performance settings
+      - JAVA_OPTS=-Xmx2g -Xms512m
+      
+    volumes:
+      # Persistent data
+      - stirling_data:/usr/share/tessdata
+      - stirling_configs:/configs
+      - stirling_logs:/logs
+      - stirling_customFiles:/customFiles
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/info/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+      
+    labels:
+      # Traefik labels for Dokploy (optional - adjust based on your setup)
+      - "traefik.enable=true"
+      - "traefik.http.routers.mesest-pdf.rule=Host(`mescopdf.mesest.cloud`)"
+      - "traefik.http.routers.mesest-pdf.entrypoints=websecure"
+      - "traefik.http.routers.mesest-pdf.tls.certresolver=letsencrypt"
+      - "traefik.http.services.mesest-pdf.loadbalancer.server.port=8080"
+      
+      # Security headers for iframe embedding from mesest.cloud
+      - "traefik.http.middlewares.mesest-pdf-headers.headers.customframeoptionsvalue=ALLOW-FROM https://mesest.cloud"
+      - "traefik.http.middlewares.mesest-pdf-headers.headers.contentSecurityPolicy=frame-ancestors 'self' https://mesest.cloud https://*.mesest.cloud"
+      - "traefik.http.routers.mesest-pdf.middlewares=mesest-pdf-headers"
+
+volumes:
+  stirling_data:
+    driver: local
+  stirling_configs:
+    driver: local
+  stirling_logs:
+    driver: local
+  stirling_customFiles:
+    driver: local
+
+networks:
+  default:
+    name: dokploy-network
+    external: true

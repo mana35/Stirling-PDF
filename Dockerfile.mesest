@@ -1,0 +1,84 @@
+# MESEST PDF Tools - Custom Stirling-PDF Build
+# Based on Stirling-PDF with iLovePDF-style UI customizations
+
+# Build stage for frontend
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+# Copy frontend files
+COPY frontend/package*.json ./
+RUN npm ci --legacy-peer-deps
+
+COPY frontend/ ./
+
+# Build frontend with MESEST customizations
+RUN npm run build
+
+# Build stage for backend
+FROM gradle:8-jdk21 AS backend-builder
+
+WORKDIR /app
+
+# Copy gradle files first for caching
+COPY build.gradle settings.gradle gradle.properties ./
+COPY gradle/ gradle/
+COPY app/ app/
+
+# Build the backend
+RUN gradle bootJar --no-daemon -x test
+
+# Final runtime image
+FROM eclipse-temurin:21-jre-alpine
+
+LABEL maintainer="MESEST <tech@mesest.com>"
+LABEL description="MESEST PDF Tools - Self-hosted PDF toolkit with iLovePDF-style UI"
+
+# Install dependencies
+RUN apk add --no-cache \
+    curl \
+    libreoffice \
+    font-noto \
+    font-noto-arabic \
+    fontconfig \
+    ttf-dejavu \
+    python3 \
+    py3-pip \
+    ghostscript \
+    qpdf \
+    poppler-utils \
+    tesseract-ocr \
+    tesseract-ocr-data-eng \
+    tesseract-ocr-data-ara \
+    && rm -rf /var/cache/apk/*
+
+# Create app user
+RUN addgroup -S stirling && adduser -S stirling -G stirling
+
+WORKDIR /app
+
+# Copy backend JAR
+COPY --from=backend-builder /app/app/core/build/libs/*.jar app.jar
+
+# Copy frontend build
+COPY --from=frontend-builder /app/frontend/dist/ /app/static/
+
+# Create necessary directories
+RUN mkdir -p /configs /logs /customFiles /usr/share/tessdata \
+    && chown -R stirling:stirling /app /configs /logs /customFiles /usr/share/tessdata
+
+USER stirling
+
+# Environment defaults
+ENV JAVA_OPTS="-Xmx1g -Xms256m"
+ENV DOCKER_ENABLE_SECURITY=false
+ENV UI_APPNAME="MESEST PDF Tools"
+ENV UI_APPNAVBARNAME="MESEST PDF"
+ENV SYSTEM_DEFAULTLOCALE=ar_SA
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/api/v1/info/status || exit 1
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
