@@ -1,12 +1,10 @@
-version: '3.8'
-
 # MESEST PDF Tools - Docker Compose for Dokploy Deployment
 # Deploy at: mescopdf.mesest.cloud
 # Keycloak SSO: sso.mesest.cloud
 
 services:
   stirling-pdf:
-    image: ghcr.io/mana35/stirling-pdf:mesest
+    image: stirlingtools/stirling-pdf:latest
     container_name: mesest-pdf-tools
     restart: unless-stopped
     ports:
