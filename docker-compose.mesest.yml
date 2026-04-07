@@ -12,7 +12,7 @@ services:
     environment:
       # App Configuration
       - DOCKER_ENABLE_SECURITY=false
-      - SYSTEM_DEFAULTLOCALE=ar_SA
+      - SYSTEM_DEFAULTLOCALE=en-GB
       - UI_APPNAME=MESEST PDF Tools
       - UI_HOMEDESCRIPTION=أدوات PDF المجانية - Free PDF Tools
       - UI_APPNAVBARNAME=MESEST PDF
