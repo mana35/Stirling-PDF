@@ -4,7 +4,8 @@
 
 services:
   stirling-pdf:
-    image: stirlingtools/stirling-pdf:latest
+    # Pinned: :latest stayed on 2.9.2, which crash-looped on /app/storage (AccessDeniedException)
+    image: stirlingtools/stirling-pdf:2.14.3
     container_name: mesest-pdf-tools
     restart: unless-stopped
     ports:
@@ -37,6 +38,7 @@ services:
       - stirling_configs:/configs
       - stirling_logs:/logs
       - stirling_customFiles:/customFiles
+      - stirling_storage:/storage
       
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/info/status"]
@@ -66,6 +68,8 @@ volumes:
   stirling_logs:
     driver: local
   stirling_customFiles:
+    driver: local
+  stirling_storage:
     driver: local
 
 networks:
